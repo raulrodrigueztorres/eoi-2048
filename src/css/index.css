@@ -1,0 +1,47 @@
+body {
+	margin: 0;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: 100vw;
+	height: 100vh;
+	background-color: #faf8ef;
+}
+
+.score {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 28vh;
+	height: 10vh;
+	border: 2vh inset #bbada0;
+	background-color: white;
+	font-size: 4vh;
+	font-weight: bold;
+}
+
+.grid {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-wrap: wrap;
+	width: 40vh;
+	height: 40vh;
+	border: 1vh ridge #bbada0;
+	background-color: white;
+	margin: 2vh;
+}
+
+.box {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 3vh;
+	font-weight: bold;
+	width: 9vh;
+	height: 9vh;
+}
