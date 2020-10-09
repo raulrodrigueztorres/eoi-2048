@@ -1,4 +1,7 @@
 import colors from '../assets/boxColors.json';
+import tips from '../assets/tips.json';
+import rules from '../assets/rules.json';
+import arrowKeys from '../assets/arrowKeys.png';
 
 const moves = {
 	left: moveLeft,
@@ -8,16 +11,68 @@ const moves = {
 };
 
 const size = 4;
-const boxs = [];
 const emptyCharacter = '';
 
+let boxs = [];
 let score = 0;
 let board = '';
+let result = '';
+let boardEnd = '';
 let scoreDisplay = '';
+let gameContainer = '';
+let tipsContainer = '';
+let rulesContainer = '';
+let restartButton = '';
+let globalContainer = '';
 
 function insertBoard(container) {
-	container.appendChild(createDisplay());
-	container.appendChild(createBoard());
+	container.appendChild(createGameContainer());
+	gameContainer.appendChild(createDisplay());
+	gameContainer.appendChild(createBoard());
+}
+
+function insertTips(container) {
+	container.appendChild(createTips());
+}
+
+function insertRules(container) {
+	container.appendChild(createRules());
+}
+
+function createRules() {
+	rulesContainer = createElement('div', ['helpContainer']);
+
+	for (const entry in rules) {
+		let paragraph = '';
+		if (entry === 'arrowKeys') {
+			paragraph = createElement('div', ['arrowKeys']);
+			paragraph.style.backgroundImage = `url('${arrowKeys}')`;
+		} else {
+			paragraph = createElement('span', ['tip']);
+			if (entry === 'title') {
+				paragraph.classList.add('title');
+			}
+			paragraph.textContent = rules[entry];
+		}
+		rulesContainer.appendChild(paragraph);
+	}
+	return rulesContainer;
+}
+
+function createTips() {
+	tipsContainer = createElement('div', ['helpContainer']);
+
+	for (const entry in tips) {
+		const tip = createElement('span', ['tip']);
+		tip.textContent = `${entry} - ${tips[entry]}`;
+		tipsContainer.appendChild(tip);
+	}
+	return tipsContainer;
+}
+
+function createGameContainer() {
+	gameContainer = createElement('div', ['gameContainer']);
+	return gameContainer;
 }
 
 function createBoard() {
@@ -27,9 +82,26 @@ function createBoard() {
 		board.appendChild(box);
 		boxs.push(box);
 	}
+	board.appendChild(createBoardEnd());
 	randomState();
 	changeColors();
 	return board;
+}
+
+function createBoardEnd() {
+	restartButton = createRestartButton(globalContainer);
+	result = createElement('div', ['result'], '');
+	boardEnd = createElement('div', ['boardEnd']);
+	boardEnd.appendChild(result);
+	boardEnd.appendChild(restartButton);
+
+	return boardEnd;
+}
+
+function createRestartButton(container) {
+	restartButton = createElement('div', ['restartButton'], 'RESTART');
+	restartButton.addEventListener('click', restart);
+	return restartButton;
 }
 
 function createDisplay() {
@@ -37,7 +109,7 @@ function createDisplay() {
 	return scoreDisplay;
 }
 
-function createElement(type, classList, textContent) {
+function createElement(type, classList, textContent = '') {
 	const element = document.createElement(type);
 	element.classList.add(...classList);
 	element.textContent = textContent;
@@ -265,13 +337,19 @@ function isGameOver() {
 }
 
 function winner() {
-	scoreDisplay.textContent = 'WINNER!';
+	result.textContent = 'WINNER!';
 	document.removeEventListener('keyup', keyActions);
 }
 
 function gameOver() {
-	scoreDisplay.textContent = 'GAME OVER!';
+	result.textContent = 'GAME OVER!';
+	displayRestart();
 	document.removeEventListener('keyup', keyActions);
+}
+
+function displayRestart() {
+	boardEnd.style.display = 'flex';
+	boardEnd.style.animation = 'zoomIn .5s linear';
 }
 
 function isFull() {
@@ -284,8 +362,25 @@ function isFull() {
 	return false;
 }
 
+function restart() {
+	boxs = [];
+	score = 0;
+	board = '';
+	boardEnd = '';
+	scoreDisplay = '';
+	gameContainer = '';
+	tipsContainer = '';
+	rulesContainer = '';
+	restartButton = '';
+	globalContainer.innerHTML = '';
+	start(globalContainer);
+}
+
 function start(container) {
+	globalContainer = container;
+	insertRules(container);
 	insertBoard(container);
+	insertTips(container);
 	document.addEventListener('keyup', keyActions);
 }
 
